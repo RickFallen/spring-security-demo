@@ -9,15 +9,19 @@
         <relativePath/>
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>securing-web</artifactId>
+    <artifactId>securing-security-demo</artifactId>
     <version>1.0</version>
-    <name>securing-web</name>
+    <name>securing-security-demo</name>
     <description>Demo project for Spring Security</description>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <jwt.version>0.9.1</jwt.version>
+        <commons.io.version>2.10.0</commons.io.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
+        <fastjson.version>1.2.76</fastjson.version>
     </properties>
 
     <dependencies>
@@ -47,6 +51,33 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Token生成与解析 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jwt.version}</version>
+        </dependency>
+
+        <!--常用工具类 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <!-- JSON工具类 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- 阿里JSON解析器 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

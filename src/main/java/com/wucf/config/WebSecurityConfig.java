@@ -3,9 +3,12 @@ package com.wucf.config;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +17,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
     /**
      * anyRequest          |   匹配所有请求路径
      * access              |   SpringEl表达式结果为true时可以访问
@@ -34,29 +36,52 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()//开启请求拦截
-            .antMatchers("/testHR").hasAnyRole("HR") //以API的形式判断某个角色是否可访问某个链接
-            .antMatchers("/", "/home").permitAll()// 凡是/和/home路径的请求统统放行
-            .anyRequest().authenticated()//其他所有URL都需要验证鉴权
-            .and()
-            .formLogin()//以form表单的形式登录
-            .loginPage("/login").permitAll()//指定登录接口，且登录接口不需要验证鉴权
-            .and()
-            .logout().permitAll();//登出接口不需要鉴权 默认接口为/logout
+                // 基于token，所以不需要session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                // CSRF禁用，因为不使用session
+                .csrf().disable()
+                .authorizeRequests()//开启请求拦截
+                // 对于登录login 允许匿名访问
+                .antMatchers("/login").anonymous()
+                .antMatchers("/testHR").hasAnyRole("HR") //以API的形式判断某个角色是否可访问某个链接
+                .antMatchers("/", "/home").permitAll()// 凡是/和/home路径的请求统统放行
+                .anyRequest().authenticated()//其他所有URL都需要验证鉴权
+                .and()
+                .logout().permitAll();//登出接口不需要鉴权 默认接口为/logout
     }
 
     @Bean
     @Override
     //使用内存存储用户角色和账号密码，以后可以自定义存储到redis或者database
     public UserDetailsService userDetailsService() {
-        UserDetails user =
+        UserDetails admin =
                 //被标注废弃是因为在此仅作example使用，不能在生产环境中使用
                 User.withDefaultPasswordEncoder()
                         .username("admin")
                         .password("password")
-                        .roles("USER","ADMIN")
+                        .roles("ADMIN", "USER")
                         .build();
 
-        return new InMemoryUserDetailsManager(user);
+        UserDetails user =
+                User.withDefaultPasswordEncoder()
+                        .username("user")
+                        .password("password")
+                        .roles("USER")
+                        .build();
+        return new InMemoryUserDetailsManager(user, admin);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    /**
+     * 身份认证接口
+     */
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService());
     }
 }
