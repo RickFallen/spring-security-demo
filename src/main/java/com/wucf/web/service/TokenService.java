@@ -1,13 +1,15 @@
 package com.wucf.web.service;
 
-import com.wucf.util.uuid.IdUtils;
+import com.wucf.utils.uuid.IdUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +19,9 @@ public class TokenService {
     // 令牌秘钥
     @Value("${token.secret}")
     private String secret;
+    @Value("${token.header}")
+    private String header;
+
     public static final String LOGIN_USER_KEY = "login:user:name";
     public static final String CACHE_KEY = "user:cache:key:";
 
@@ -84,5 +89,30 @@ public class TokenService {
     public UserDetails getUserFromToken(String token) {
         String loginKey = getLoginKeyFromToken(token);
         return CACHE.get(CACHE_KEY + loginKey);
+    }
+
+    /**
+     * 获取用户身份信息
+     *
+     * @return 用户信息
+     */
+    public UserDetails getUserFromRequest(HttpServletRequest request) {
+        // 获取请求携带的令牌
+        String token = getToken(request);
+        if (StringUtils.isNotEmpty(token)) {
+            return getUserFromToken(token);
+        }
+        return null;
+    }
+
+    /**
+     * 获取请求token
+     *
+     * @param request
+     * @return token
+     */
+    private String getToken(HttpServletRequest request) {
+        String token = request.getHeader(header);
+        return token;
     }
 }

@@ -1,4 +1,4 @@
-package com.wucf.util.uuid;
+package com.wucf.utils.uuid;
 
 import com.wucf.core.exception.BaseException;
 

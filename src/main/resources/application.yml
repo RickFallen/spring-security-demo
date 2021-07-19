@@ -5,3 +5,4 @@ server:
 token:
   # 令牌密钥
   secret: abcdefghijklmnopqrstuvwxyz
+  header: Token

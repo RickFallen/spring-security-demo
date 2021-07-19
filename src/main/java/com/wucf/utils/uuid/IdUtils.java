@@ -1,4 +1,4 @@
-package com.wucf.util.uuid;
+package com.wucf.utils.uuid;
 
 /**
  * ID生成器工具类

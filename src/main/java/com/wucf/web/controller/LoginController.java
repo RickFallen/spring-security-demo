@@ -1,6 +1,6 @@
 package com.wucf.web.controller;
 
-import com.wucf.core.domain.CommonResponse;
+import com.wucf.core.domain.ResponseEntity;
 import com.wucf.core.exception.BaseException;
 import com.wucf.web.dto.LoginBody;
 import com.wucf.web.service.TokenService;
@@ -27,8 +27,8 @@ public class LoginController {
      * @return 结果
      */
     @PostMapping("/login")
-    public CommonResponse login(@RequestBody LoginBody loginBody) {
-        CommonResponse response = CommonResponse.success();
+    public ResponseEntity login(@RequestBody LoginBody loginBody) {
+        ResponseEntity response = ResponseEntity.success();
         Authentication authentication;
         try {
             /**

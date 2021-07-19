@@ -1,8 +1,9 @@
 package com.wucf.config;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import com.wucf.core.handler.AuthenticationEntryPointHandler;
+import com.wucf.web.filter.JwtAuthenticationTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,10 +14,17 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    //jwt过滤器鉴权
+    @Autowired
+    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    //认证失败处理器
+    @Autowired
+    private AuthenticationEntryPointHandler authenticationEntryPointHandler;
+
     /**
      * anyRequest          |   匹配所有请求路径
      * access              |   SpringEl表达式结果为true时可以访问
@@ -40,14 +48,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 // CSRF禁用，因为不使用session
                 .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPointHandler).and()
                 .authorizeRequests()//开启请求拦截
                 // 对于登录login 允许匿名访问
                 .antMatchers("/login").anonymous()
-                .antMatchers("/testHR").hasAnyRole("HR") //以API的形式判断某个角色是否可访问某个链接
-                .antMatchers("/", "/home").permitAll()// 凡是/和/home路径的请求统统放行
                 .anyRequest().authenticated()//其他所有URL都需要验证鉴权
                 .and()
                 .logout().permitAll();//登出接口不需要鉴权 默认接口为/logout
+
+        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

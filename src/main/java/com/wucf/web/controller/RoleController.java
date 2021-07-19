@@ -1,7 +1,6 @@
 package com.wucf.web.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,10 +22,10 @@ public class RoleController {
      *
      * @return
      */
-    @GetMapping("/testDev")
-    @PreAuthorize("hasRole('DEV')")
+    @GetMapping("/testUser")
+    @PreAuthorize("hasRole('USER')")
     public String testDev(){
-        return "role:dev";
+        return "role:user";
     }
 
     /**

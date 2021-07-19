@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * 操作消息提醒
  */
-public class CommonResponse extends HashMap<String, Object> {
+public class ResponseEntity extends HashMap<String, Object> {
 
     /**
      * 状态码
@@ -28,7 +28,7 @@ public class CommonResponse extends HashMap<String, Object> {
     /**
      * 初始化一个新创建的 AjaxResult 对象，使其表示一个空消息。
      */
-    public CommonResponse() {
+    public ResponseEntity() {
     }
 
     /**
@@ -37,7 +37,7 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param code 状态码
      * @param msg  返回内容
      */
-    public CommonResponse(int code, String msg) {
+    public ResponseEntity(int code, String msg) {
         super.put(CODE_TAG, code);
         super.put(MSG_TAG, msg);
     }
@@ -49,7 +49,7 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param msg  返回内容
      * @param data 数据对象
      */
-    public CommonResponse(int code, String msg, Object data) {
+    public ResponseEntity(int code, String msg, Object data) {
         super.put(CODE_TAG, code);
         super.put(MSG_TAG, msg);
         if (Objects.nonNull(data)) {
@@ -62,8 +62,8 @@ public class CommonResponse extends HashMap<String, Object> {
      *
      * @return 成功消息
      */
-    public static CommonResponse success() {
-        return CommonResponse.success("操作成功");
+    public static ResponseEntity success() {
+        return ResponseEntity.success("操作成功");
     }
 
     /**
@@ -71,8 +71,8 @@ public class CommonResponse extends HashMap<String, Object> {
      *
      * @return 成功消息
      */
-    public static CommonResponse success(Object data) {
-        return CommonResponse.success("操作成功", data);
+    public static ResponseEntity success(Object data) {
+        return ResponseEntity.success("操作成功", data);
     }
 
     /**
@@ -81,8 +81,8 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param msg 返回内容
      * @return 成功消息
      */
-    public static CommonResponse success(String msg) {
-        return CommonResponse.success(msg, null);
+    public static ResponseEntity success(String msg) {
+        return ResponseEntity.success(msg, null);
     }
 
     /**
@@ -92,8 +92,8 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param data 数据对象
      * @return 成功消息
      */
-    public static CommonResponse success(String msg, Object data) {
-        return new CommonResponse(HttpStatus.OK.value(), msg, data);
+    public static ResponseEntity success(String msg, Object data) {
+        return new ResponseEntity(HttpStatus.OK.value(), msg, data);
     }
 
     /**
@@ -101,8 +101,8 @@ public class CommonResponse extends HashMap<String, Object> {
      *
      * @return
      */
-    public static CommonResponse error() {
-        return CommonResponse.error("操作失败");
+    public static ResponseEntity error() {
+        return ResponseEntity.error("操作失败");
     }
 
     /**
@@ -111,8 +111,8 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param msg 返回内容
      * @return 警告消息
      */
-    public static CommonResponse error(String msg) {
-        return CommonResponse.error(msg, null);
+    public static ResponseEntity error(String msg) {
+        return ResponseEntity.error(msg, null);
     }
 
     /**
@@ -122,8 +122,8 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param data 数据对象
      * @return 警告消息
      */
-    public static CommonResponse error(String msg, Object data) {
-        return new CommonResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg, data);
+    public static ResponseEntity error(String msg, Object data) {
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg, data);
     }
 
     /**
@@ -133,7 +133,7 @@ public class CommonResponse extends HashMap<String, Object> {
      * @param msg  返回内容
      * @return 警告消息
      */
-    public static CommonResponse error(int code, String msg) {
-        return new CommonResponse(code, msg, null);
+    public static ResponseEntity error(int code, String msg) {
+        return new ResponseEntity(code, msg, null);
     }
 }
