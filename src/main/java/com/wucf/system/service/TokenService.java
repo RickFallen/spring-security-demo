@@ -1,12 +1,13 @@
-package com.wucf.web.service;
+package com.wucf.system.service;
 
+import com.wucf.core.common.Constants;
+import com.wucf.core.model.LoginUser;
 import com.wucf.utils.uuid.IdUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,11 +22,11 @@ public class TokenService {
     private String secret;
     @Value("${token.header}")
     private String header;
+    // 令牌有效期（默认30分钟）
+    @Value("${token.expireTime}")
+    private Integer expireTime;
 
-    public static final String LOGIN_USER_KEY = "login:user:name";
-    public static final String CACHE_KEY = "user:cache:key:";
-
-    public static final Map<String, UserDetails> CACHE = new ConcurrentHashMap<>();
+    public static final Map<String, LoginUser> CACHE = new ConcurrentHashMap<>();
 
     /**
      * 创建令牌
@@ -33,13 +34,13 @@ public class TokenService {
      * @param userDetails 用户信息
      * @return 令牌
      */
-    public String createToken(UserDetails userDetails) {
+    public String createToken(LoginUser userDetails) {
         Map<String, Object> claims = new HashMap<>();
         //先把randomId放入Token中
         //解析Token时把randomId取出来再去缓存拿user（缓存中也可只放userId，都可以）
         String randomId = IdUtils.fastUUID();
-        claims.put(LOGIN_USER_KEY, randomId);
-        CACHE.put(CACHE_KEY + randomId, userDetails);
+        claims.put(Constants.LOGIN_USER_KEY, randomId);
+        CACHE.put(Constants.CACHE_KEY + randomId, userDetails);
         return createToken(claims);
     }
 
@@ -77,18 +78,17 @@ public class TokenService {
      */
     public String getLoginKeyFromToken(String token) {
         Claims claims = parseToken(token);
-        return (String) claims.get(LOGIN_USER_KEY);
+        return (String) claims.get(Constants.LOGIN_USER_KEY);
     }
 
     /**
      * 从令牌中获取token，再从缓存中获取用户信息
-     *
      * @param token
      * @return
      */
-    public UserDetails getUserFromToken(String token) {
+    public LoginUser getUserFromToken(String token) {
         String loginKey = getLoginKeyFromToken(token);
-        return CACHE.get(CACHE_KEY + loginKey);
+        return CACHE.get(Constants.CACHE_KEY + loginKey);
     }
 
     /**
@@ -96,7 +96,7 @@ public class TokenService {
      *
      * @return 用户信息
      */
-    public UserDetails getUserFromRequest(HttpServletRequest request) {
+    public LoginUser getUserFromRequest(HttpServletRequest request) {
         // 获取请求携带的令牌
         String token = getToken(request);
         if (StringUtils.isNotEmpty(token)) {

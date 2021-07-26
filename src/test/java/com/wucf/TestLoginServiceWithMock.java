@@ -3,9 +3,10 @@ package com.wucf;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.wucf.core.model.LoginBody;
 import com.wucf.web.controller.LoginController;
-import com.wucf.web.dto.LoginBody;
-import com.wucf.web.service.TokenService;
+
+import com.wucf.system.service.TokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 /**
- * 在不启动 web 容器的情况下，测试接口
+ * mock 测试接口
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -46,7 +46,7 @@ public class TestLoginServiceWithMock {
     //测试admin账户登录
     @Test
     public void testLogin() throws Exception {
-        LoginBody loginBody = new LoginBody("admin", "password");
+        LoginBody loginBody = new LoginBody("admin", "admin123");
         //创建登录的POST请求
         MockHttpServletRequestBuilder builder = post("/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -105,10 +105,12 @@ public class TestLoginServiceWithMock {
         //获取token
         String token = JSONObject.parseObject(resultJson).getString("Token");
 
-        //请求只有ADMIN角色才能访问的接口,如果返回403则代表测试通过
+        //请求只有ADMIN角色才能访问的接口
         this.mockMvc
                 .perform(get("/testAdmin").header("Token", token).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").isNumber())
+                .andExpect(content().string(containsString("403")));
     }
 
     //测试登录成功但是请求没有权限的接口，期望返回200

@@ -1,11 +1,11 @@
 package com.wucf.web.filter;
 
+import com.wucf.core.model.LoginUser;
 import com.wucf.utils.SecurityUtils;
-import com.wucf.web.service.TokenService;
+import com.wucf.system.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,10 +28,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        UserDetails userDetails = tokenService.getUserFromRequest(request);
-        if (Objects.nonNull(userDetails) && Objects.isNull(SecurityUtils.getAuthentication())) {
+        LoginUser loginUser = tokenService.getUserFromRequest(request);
+        if (Objects.nonNull(loginUser) && Objects.isNull(SecurityUtils.getAuthentication())) {
             //把用户所拥有的角色注入到Security上下文环境中
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }

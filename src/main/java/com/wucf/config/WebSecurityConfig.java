@@ -1,6 +1,6 @@
 package com.wucf.config;
 
-import com.wucf.core.handler.AuthenticationEntryPointHandler;
+import com.wucf.core.security.AuthenticationEntryPointHandler;
 import com.wucf.web.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,10 +10,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -24,6 +22,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //认证失败处理器
     @Autowired
     private AuthenticationEntryPointHandler authenticationEntryPointHandler;
+    /**
+     * 自定义用户认证逻辑
+     */
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     /**
      * anyRequest          |   匹配所有请求路径
@@ -61,27 +64,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     @Override
-    //使用内存存储用户角色和账号密码，以后可以自定义存储到redis或者database
-    public UserDetailsService userDetailsService() {
-        UserDetails admin =
-                //被标注废弃是因为在此仅作example使用，不能在生产环境中使用
-                User.withDefaultPasswordEncoder()
-                        .username("admin")
-                        .password("password")
-                        .roles("ADMIN", "USER")
-                        .build();
-
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build();
-        return new InMemoryUserDetailsManager(user, admin);
-    }
-
-    @Bean
-    @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
@@ -91,6 +73,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService());
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
+
+    /**
+     * 强散列哈希加密实现
+     */
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 }
