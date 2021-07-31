@@ -7,6 +7,8 @@
 
 本教程计划采用发布版本的形式，从最简单的登录验证、鉴权授权到搭建 OAuth2 微服务，由易到难慢慢学习 Spring Security
 
+注：本项目参考[若依](http://www.ruoyi.vip/)，目的是把权限模块单独拿出来并最终掌握它
+
 ## 1.0 版本
 1.0 版本直接取自 Spring Security 官方文档[securing web guides](https://spring.io/guides/gs/securing-web/)
 
@@ -14,7 +16,6 @@
 
 + 首页、登录页面、登陆后跳转页共三个简单页面
 + 开启 Spring Security 的最小配置
-+ 没有 application.yml 默认就是启动8080端口
 
 ## 1.1 版本
 
@@ -51,4 +52,11 @@
 + 可以连接数据库
 + 初始化sql在sql文件夹下
 + 实现从数据库加载用户名密码而不是内存
+
+## 1.5版本
+
+此版本更新内容有
+
++ 用户的增删改查接口
++ 角色的增删改查接口
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -41,7 +42,27 @@ public class TokenService {
         String randomId = IdUtils.fastUUID();
         claims.put(Constants.LOGIN_USER_KEY, randomId);
         CACHE.put(Constants.CACHE_KEY + randomId, userDetails);
+        userDetails.setUuidToken(randomId);
         return createToken(claims);
+    }
+
+    /**
+     * 设置用户身份信息
+     */
+    public void setLoginUser(LoginUser loginUser) {
+        if (Objects.nonNull(loginUser) && StringUtils.isNotEmpty(loginUser.getUuidToken())) {
+            refreshToken(loginUser);
+        }
+    }
+
+    /**
+     * 刷新令牌有效期
+     *
+     * @param loginUser 登录信息
+     */
+    public void refreshToken(LoginUser loginUser) {
+        String uuidToken = loginUser.getUuidToken();
+        CACHE.put(Constants.CACHE_KEY + uuidToken, loginUser);
     }
 
     /**
@@ -83,6 +104,7 @@ public class TokenService {
 
     /**
      * 从令牌中获取token，再从缓存中获取用户信息
+     *
      * @param token
      * @return
      */
