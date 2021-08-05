@@ -1,7 +1,10 @@
 package com.wucf.system.service;
 
 import com.wucf.core.exception.BaseException;
+import com.wucf.core.exception.CustomException;
 import com.wucf.core.model.LoginUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,9 +21,10 @@ import javax.annotation.Resource;
 public class SysLoginService {
     @Autowired
     private TokenService tokenService;
-
     @Resource
     private AuthenticationManager authenticationManager;
+
+    public static final Logger logger = LoggerFactory.getLogger(SysLoginService.class);
 
     /**
      * 登录验证
@@ -38,7 +42,10 @@ public class SysLoginService {
                     .authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
             if (e instanceof BadCredentialsException) {
-               throw new BaseException("用户名或密码错误");
+                logger.info(e.getMessage());
+                throw new BaseException("用户名或密码错误");
+            } else {
+                throw new CustomException(e.getMessage());
             }
         }
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();

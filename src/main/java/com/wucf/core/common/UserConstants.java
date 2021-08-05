@@ -94,4 +94,10 @@ public class UserConstants {
      */
     public final static String UNIQUE = "0";
     public final static String NOT_UNIQUE = "1";
+
+    /**
+     * 用户类型
+     */
+    public static final String SYSTEM_USER_TYPE = "00";
+    public static final String REGISTER_USER_TYPE = "01";
 }

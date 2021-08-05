@@ -4,6 +4,7 @@ import com.wucf.core.security.AuthenticationEntryPointHandler;
 import com.wucf.web.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -55,8 +56,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPointHandler).and()
                 .authorizeRequests()//开启请求拦截
                 // 对于登录login 允许匿名访问
-                .antMatchers("/login").anonymous()
+                // 对于登录login 验证码captchaImage 允许匿名访问
+                .antMatchers("/login", "/captchaImage").anonymous()
+                .antMatchers(
+                        HttpMethod.GET,
+                        "/",
+                        "/*.html",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/profile/**",
+                        "/**/*.jpg",
+                        "/**/*.png"
+                ).permitAll()
+                .antMatchers("/fonts/**").anonymous()
+                .antMatchers("/css/**").anonymous()
+                .antMatchers("/js/**").anonymous()
+                .antMatchers("/common/download**").anonymous()
+                .antMatchers("/common/download/resource**").anonymous()
+                .antMatchers("/swagger-ui.html").anonymous()
+                .antMatchers("/swagger-resources/**").anonymous()
+                .antMatchers("/webjars/**").anonymous()
+                .antMatchers("/*/api-docs").anonymous()
+                .antMatchers("/druid/**").anonymous()
                 .anyRequest().authenticated()//其他所有URL都需要验证鉴权
+                .and()
+                //同域名下允许使用frame嵌套
+                .headers().frameOptions().sameOrigin()
                 .and()
                 .logout().permitAll();//登出接口不需要鉴权 默认接口为/logout
 

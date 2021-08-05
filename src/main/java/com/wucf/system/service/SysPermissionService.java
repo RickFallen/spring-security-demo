@@ -28,7 +28,7 @@ public class SysPermissionService {
         if (user.isAdmin()) {
             perms.add("*:*:*");
         } else {
-            perms.addAll(menuService.selectMenuPermsByUserId(user.getUserId()));
+            perms.addAll(menuService.selectPermsByUserId(user.getUserId()));
         }
         return perms;
     }

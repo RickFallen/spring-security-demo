@@ -1,5 +1,6 @@
 package com.wucf.system.mapper;
 
+
 import com.wucf.system.domain.SysRole;
 
 import java.util.List;
@@ -7,10 +8,11 @@ import java.util.List;
 /**
  * 角色表 数据层
  */
-public interface SysRoleMapper {
+public interface SysRoleMapper
+{
     /**
      * 根据条件分页查询角色数据
-     *
+     * 
      * @param role 角色信息
      * @return 角色数据集合信息
      */
@@ -18,62 +20,39 @@ public interface SysRoleMapper {
 
     /**
      * 根据用户ID查询角色
-     *
+     * 
      * @param userId 用户ID
      * @return 角色列表
      */
-    List<SysRole> selectRolePermissionByUserId(Long userId);
-
-    /**
-     * 查询所有角色
-     *
-     * @return 角色列表
-     */
-    List<SysRole> selectRoleAll();
-
-    /**
-     * 根据用户ID获取角色选择框列表
-     *
-     * @param userId 用户ID
-     * @return 选中角色ID列表
-     */
-    List<Integer> selectRoleListByUserId(Long userId);
+    List<SysRole> selectRolesByUserId(Long userId);
 
     /**
      * 通过角色ID查询角色
-     *
+     * 
      * @param roleId 角色ID
      * @return 角色对象信息
      */
     SysRole selectRoleById(Long roleId);
 
     /**
-     * 根据用户ID查询角色
-     *
-     * @param userName 用户名
-     * @return 角色列表
+     * 通过角色ID删除角色
+     * 
+     * @param roleId 角色ID
+     * @return 结果
      */
-    List<SysRole> selectRolesByUserName(String userName);
+    int deleteRoleById(Long roleId);
 
     /**
-     * 校验角色名称是否唯一
-     *
-     * @param roleName 角色名称
-     * @return 角色信息
+     * 批量角色用户信息
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
      */
-    SysRole checkRoleNameUnique(String roleName);
-
-    /**
-     * 校验角色权限是否唯一
-     *
-     * @param roleKey 角色权限
-     * @return 角色信息
-     */
-    SysRole checkRoleKeyUnique(String roleKey);
+    int deleteRoleByIds(Long[] ids);
 
     /**
      * 修改角色信息
-     *
+     * 
      * @param role 角色信息
      * @return 结果
      */
@@ -81,25 +60,25 @@ public interface SysRoleMapper {
 
     /**
      * 新增角色信息
-     *
+     * 
      * @param role 角色信息
      * @return 结果
      */
     int insertRole(SysRole role);
 
     /**
-     * 通过角色ID删除角色
-     *
-     * @param roleId 角色ID
-     * @return 结果
+     * 校验角色名称是否唯一
+     * 
+     * @param roleName 角色名称
+     * @return 角色信息
      */
-    int deleteRoleById(Long roleId);
-
+    SysRole checkRoleNameUnique(String roleName);
+    
     /**
-     * 批量删除角色信息
-     *
-     * @param roleIds 需要删除的角色ID
-     * @return 结果
+     * 校验角色权限是否唯一
+     * 
+     * @param roleKey 角色权限
+     * @return 角色信息
      */
-    int deleteRoleByIds(Long[] roleIds);
+    SysRole checkRoleKeyUnique(String roleKey);
 }

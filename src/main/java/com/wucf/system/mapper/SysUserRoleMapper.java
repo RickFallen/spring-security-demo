@@ -1,6 +1,5 @@
 package com.wucf.system.mapper;
 
-
 import com.wucf.system.domain.SysUserRole;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,6 +9,14 @@ import java.util.List;
  * 用户与角色关联表 数据层
  */
 public interface SysUserRoleMapper {
+    /**
+     * 通过用户ID查询用户和角色关联
+     *
+     * @param userId 用户ID
+     * @return 用户和角色关联列表
+     */
+    List<SysUserRole> selectUserRoleByUserId(Long userId);
+
     /**
      * 通过用户ID删除用户和角色关联
      *

@@ -4,7 +4,6 @@ package com.wucf;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wucf.core.model.LoginBody;
-import com.wucf.web.controller.LoginController;
 
 import com.wucf.system.service.TokenService;
 import org.junit.jupiter.api.Test;
@@ -33,15 +32,7 @@ public class TestLoginServiceWithMock {
     private MockMvc mockMvc;
 
     @Autowired
-    private LoginController controller;
-
-    @Autowired
     private TokenService tokenService;
-
-    @Test
-    public void contextLoads(){
-        assertThat(controller).isNotNull();
-    }
 
     //测试admin账户登录
     @Test

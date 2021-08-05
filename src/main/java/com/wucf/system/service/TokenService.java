@@ -9,12 +9,17 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 @Component
 public class TokenService {
@@ -133,8 +138,30 @@ public class TokenService {
      * @param request
      * @return token
      */
-    private String getToken(HttpServletRequest request) {
+    public String getToken(HttpServletRequest request) {
         String token = request.getHeader(header);
+        if(StringUtils.isEmpty(token)){
+            token = request.getParameter("Token");
+        }
+/*        if(StringUtils.isEmpty(token)){
+            Cookie[] cookies = request.getCookies();
+            Optional<Cookie> cookieOptional = Stream.of(cookies).filter(cookie -> header.equals(cookie.getName())).findFirst();
+            if(cookieOptional.isPresent())
+                token = cookieOptional.get().getValue();
+        }*/
+        if (StringUtils.isNotEmpty(token)){
+            token = token.replaceAll("\"", "");
+            token = token.replaceAll("\'", "");
+        }
         return token;
+    }
+
+    /**
+     * 获取请求token
+     * @return token
+     */
+    public String getToken() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        return getToken(request) ;
     }
 }

@@ -2,6 +2,7 @@ package com.wucf.utils;
 
 
 import com.wucf.core.exception.CustomException;
+import com.wucf.core.model.LoginUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * 安全服务工具类
  */
 public class SecurityUtils {
+    public static Long getUserId(){
+        try {
+            return ((LoginUser)getLoginUser()).getUser().getUserId();
+        } catch (Exception e) {
+            throw new CustomException("获取用户账户异常", HttpStatus.UNAUTHORIZED.value());
+        }
+    }
+
     /**
      * 获取用户账户
      **/
@@ -62,5 +71,15 @@ public class SecurityUtils {
     public static boolean matchesPassword(String rawPassword, String encodedPassword) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    /**
+     * 是否为管理员
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    public static boolean isAdmin(Long userId) {
+        return userId != null && 1L == userId;
     }
 }
