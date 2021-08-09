@@ -28,7 +28,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        LoginUser loginUser = tokenService.getUserFromRequest(request);
+        LoginUser loginUser = tokenService.getLoginUser(request);
         if (Objects.nonNull(loginUser) && Objects.isNull(SecurityUtils.getAuthentication())) {
             //把用户所拥有的角色注入到Security上下文环境中
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());

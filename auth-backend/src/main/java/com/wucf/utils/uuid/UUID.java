@@ -1,6 +1,7 @@
 package com.wucf.utils.uuid;
 
-import com.wucf.core.exception.BaseException;
+
+import com.sun.xml.internal.ws.util.UtilException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -59,7 +60,6 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
     public UUID(long mostSigBits, long leastSigBits) {
         this.mostSigBits = mostSigBits;
         this.leastSigBits = leastSigBits;
-
     }
 
     /**
@@ -424,7 +424,7 @@ public final class UUID implements java.io.Serializable, Comparable<UUID> {
         try {
             return SecureRandom.getInstance("SHA1PRNG");
         } catch (NoSuchAlgorithmException e) {
-            throw new BaseException(e);
+            throw new UtilException(e);
         }
     }
 

@@ -43,7 +43,7 @@ public class PermissionService {
         if (StringUtils.isEmpty(permission)) {
             return false;
         }
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
@@ -70,7 +70,7 @@ public class PermissionService {
         if (StringUtils.isEmpty(permissions)) {
             return false;
         }
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
@@ -93,7 +93,7 @@ public class PermissionService {
         if (StringUtils.isEmpty(role)) {
             return false;
         }
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getUser().getRoles())) {
             return false;
         }
@@ -126,7 +126,7 @@ public class PermissionService {
         if (StringUtils.isEmpty(roles)) {
             return false;
         }
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (Objects.isNull(loginUser) || CollectionUtils.isEmpty(loginUser.getUser().getRoles())) {
             return false;
         }

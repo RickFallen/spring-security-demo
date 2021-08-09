@@ -25,8 +25,6 @@ import java.util.Objects;
 
 /**
  * 角色信息
- *
- * @author ruoyi
  */
 @RestController
 @RequestMapping("/system/role")
@@ -100,7 +98,7 @@ public class SysRoleController extends BaseController {
 
         if (roleService.updateRole(role) > 0) {
             // 更新缓存用户权限
-            LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             if (Objects.nonNull(loginUser.getUser()) && !loginUser.getUser().isAdmin()) {
                 loginUser.setPermissions(permissionService.getMenuPermission(loginUser.getUser()));
                 loginUser.setUser(userService.selectUserByUserName(loginUser.getUser().getUserName()));

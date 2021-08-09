@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 
 /**
  * 用户信息
- *
- * @author ruoyi
  */
 @RestController
 @RequestMapping("/system/user")
@@ -70,7 +68,7 @@ public class SysUserController extends BaseController {
     public ResponseEntity importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
         List<SysUser> userList = util.importExcel(file.getInputStream());
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String operName = loginUser.getUsername();
         String message = userService.importUser(userList, updateSupport, operName);
         return ResponseEntity.success(message);

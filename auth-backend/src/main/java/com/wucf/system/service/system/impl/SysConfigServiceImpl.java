@@ -21,8 +21,6 @@ import static com.wucf.utils.DictUtils.getCacheName;
 
 /**
  * 参数配置 服务层实现
- *
- * @author ruoyi
  */
 @Service
 public class SysConfigServiceImpl implements ISysConfigService {

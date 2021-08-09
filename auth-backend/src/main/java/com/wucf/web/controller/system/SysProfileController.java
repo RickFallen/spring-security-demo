@@ -18,8 +18,6 @@ import java.io.IOException;
 
 /**
  * 个人信息 业务处理
- *
- * @author ruoyi
  */
 @RestController
 @RequestMapping("/system/user/profile")
@@ -35,7 +33,7 @@ public class SysProfileController extends BaseController {
      */
     @GetMapping
     public ResponseEntity profile() {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         SysUser user = loginUser.getUser();
         ResponseEntity ajax = ResponseEntity.success(user);
         ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
@@ -57,7 +55,7 @@ public class SysProfileController extends BaseController {
             return ResponseEntity.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         if (userService.updateUserProfile(user) > 0) {
-            LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             // 更新缓存用户信息
             loginUser.getUser().setNickName(user.getNickName());
             loginUser.getUser().setPhonenumber(user.getPhonenumber());
@@ -74,7 +72,7 @@ public class SysProfileController extends BaseController {
      */
     @PutMapping("/updatePwd")
     public ResponseEntity updatePwd(String oldPassword, String newPassword) {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String userName = loginUser.getUsername();
         String password = loginUser.getPassword();
         if (!SecurityUtils.matchesPassword(oldPassword, password)) {
@@ -98,7 +96,7 @@ public class SysProfileController extends BaseController {
     @PostMapping("/avatar")
     public ResponseEntity avatar(@RequestParam("avatarfile") MultipartFile file) throws IOException {
         /*if (!file.isEmpty()) {
-            LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
             String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file);
             if (userService.updateUserAvatar(loginUser.getUsername(), avatar)) {
                 ResponseEntity ajax = ResponseEntity.success();

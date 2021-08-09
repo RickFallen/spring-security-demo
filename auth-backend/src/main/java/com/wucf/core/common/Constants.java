@@ -4,9 +4,6 @@ package com.wucf.core.common;
  * 通用常量信息
  */
 public class Constants {
-    public static final String LOGIN_USER_KEY = "login:user:name";
-
-    public static final String CACHE_KEY = "user:cache:key:";
     /**
      * UTF-8 字符集
      */
@@ -35,7 +32,7 @@ public class Constants {
     /**
      * 通用失败标识
      */
-    public static final String FAIL = "-1";
+    public static final String FAIL = "1";
 
     /**
      * 登录成功
@@ -53,6 +50,26 @@ public class Constants {
     public static final String LOGIN_FAIL = "Error";
 
     /**
+     * 验证码 redis key
+     */
+    public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
+
+    /**
+     * 登录用户 redis key
+     */
+    public static final String LOGIN_TOKEN_KEY = "login_tokens:";
+
+    /**
+     * 防重提交 redis key
+     */
+    public static final String REPEAT_SUBMIT_KEY = "repeat_submit:";
+
+    /**
+     * 验证码有效期（分钟）
+     */
+    public static final Integer CAPTCHA_EXPIRATION = 2;
+
+    /**
      * 令牌
      */
     public static final String TOKEN = "token";
@@ -61,6 +78,11 @@ public class Constants {
      * 令牌前缀
      */
     public static final String TOKEN_PREFIX = "Bearer ";
+
+    /**
+     * 令牌前缀
+     */
+    public static final String LOGIN_USER_KEY = "login_user_key";
 
     /**
      * 用户ID
@@ -88,26 +110,22 @@ public class Constants {
     public static final String JWT_AUTHORITIES = "authorities";
 
     /**
-     * 字典管理 cache key
-     */
-    public static final String SYS_DICT_KEY = "sys_dict:";
-
-    /**
-     * 参数管理 cache name
-     */
-    public static final String SYS_CONFIG_CACHE = "sys-config";
-
-    /**
      * 参数管理 cache key
      */
     public static final String SYS_CONFIG_KEY = "sys_config:";
+
+    /**
+     * 字典管理 cache key
+     */
+    public static final String SYS_DICT_KEY = "sys_dict:";
 
     /**
      * 资源映射路径 前缀
      */
     public static final String RESOURCE_PREFIX = "/profile";
 
-    public static final String LOCAL_PATH = "D:/upload/uploadPath";
-
-    public static final String DOWNLOAD_PATH = LOCAL_PATH + "/download/";
+    /**
+     * RMI 远程方法调用
+     */
+    public static final String LOOKUP_RMI = "rmi://";
 }

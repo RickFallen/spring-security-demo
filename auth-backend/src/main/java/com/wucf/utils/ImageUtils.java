@@ -1,5 +1,6 @@
 package com.wucf.utils;
 
+import com.wucf.config.SystemConfig;
 import com.wucf.core.common.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.IOUtils;
@@ -63,7 +64,7 @@ public class ImageUtils {
                 in = urlConnection.getInputStream();
             } else {
                 // 本机地址
-                String localPath = Constants.LOCAL_PATH;
+                String localPath = SystemConfig.getProfile();
                 String downloadPath = localPath + StringUtils.substringAfter(url, Constants.RESOURCE_PREFIX);
                 in = new FileInputStream(downloadPath);
             }

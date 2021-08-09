@@ -35,7 +35,7 @@ public class SysMenuController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @GetMapping("/list")
     public ResponseEntity list(SysMenu menu) {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Long userId = loginUser.getUser().getUserId();
         List<SysMenu> menus = menuService.selectMenuList(menu, userId);
         return ResponseEntity.success(menus);
@@ -55,7 +55,7 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping("/treeselect")
     public ResponseEntity treeselect(SysMenu menu) {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Long userId = loginUser.getUser().getUserId();
         List<SysMenu> menus = menuService.selectMenuList(menu, userId);
         return ResponseEntity.success(menuService.buildMenuTreeSelect(menus));
@@ -66,7 +66,7 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public ResponseEntity roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         List<SysMenu> menus = menuService.selectMenuList(loginUser.getUser().getUserId());
         ResponseEntity ajax = ResponseEntity.success();
         ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));

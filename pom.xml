@@ -171,6 +171,13 @@
                 <artifactId>kaptcha</artifactId>
                 <version>${kaptcha.version}</version>
             </dependency>
+
+            <!-- 缓存框架 -->
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>2.9.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

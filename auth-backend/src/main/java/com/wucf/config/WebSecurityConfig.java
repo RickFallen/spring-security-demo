@@ -1,6 +1,7 @@
 package com.wucf.config;
 
 import com.wucf.core.security.AuthenticationEntryPointHandler;
+import com.wucf.core.security.LogoutSuccessHandlerImpl;
 import com.wucf.web.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.filter.CorsFilter;
 
 //开启@PreAuth注解，可以在Controller方法上使用
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -29,6 +32,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Autowired
     private UserDetailsService userDetailsService;
+
+    /**
+     * 跨域过滤器
+     */
+    @Autowired
+    private CorsFilter corsFilter;
+
+    /**
+     * 退出处理类
+     */
+    @Autowired
+    private LogoutSuccessHandlerImpl logoutSuccessHandler;
+
 
     /**
      * anyRequest          |   匹配所有请求路径
@@ -55,7 +71,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPointHandler).and()
                 .authorizeRequests()//开启请求拦截
-                // 对于登录login 允许匿名访问
                 // 对于登录login 验证码captchaImage 允许匿名访问
                 .antMatchers("/login", "/captchaImage").anonymous()
                 .antMatchers(
@@ -85,8 +100,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .logout().permitAll();//登出接口不需要鉴权 默认接口为/logout
-
+        http.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        // 添加CORS filter
+        http.addFilterBefore(corsFilter, JwtAuthenticationTokenFilter.class);
+        http.addFilterBefore(corsFilter, LogoutFilter.class);
     }
 
     @Bean

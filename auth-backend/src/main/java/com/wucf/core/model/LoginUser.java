@@ -17,7 +17,7 @@ public class LoginUser implements UserDetails {
     /**
      * 用户唯一标识
      */
-    private String uuidToken;
+    private String identityStr;
 
     /**
      * 登录时间
@@ -59,12 +59,12 @@ public class LoginUser implements UserDetails {
      */
     private SysUser user;
 
-    public String getUuidToken() {
-        return uuidToken;
+    public String getIdentityStr() {
+        return identityStr;
     }
 
-    public void setUuidToken(String uuidToken) {
-        this.uuidToken = uuidToken;
+    public void setIdentityStr(String identityStr) {
+        this.identityStr = identityStr;
     }
 
     public LoginUser() {

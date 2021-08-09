@@ -60,7 +60,7 @@ public class TestLoginServiceWithMock {
         //获取token
         String token = JSONObject.parseObject(resultJson).getString("Token");
         //解析token并判断是否admin账号
-        assertThat(tokenService.getUserFromToken(token).getUsername()).isEqualTo("admin");
+        assertThat(tokenService.getUsernameFromToken(token)).isEqualTo("admin");
     }
 
     @Test

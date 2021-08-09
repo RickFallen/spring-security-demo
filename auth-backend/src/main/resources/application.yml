@@ -1,9 +1,29 @@
+# 开发环境配置
 server:
+  # 服务器的HTTP端口，默认为8080
   port: 8080
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 800
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
 
 system:
   name: 项目管控
+  captchaType: math #验证码类型 char、math
+  # 版本
   version: 1.0
+  # 版权年份
+  copyrightYear: 2021
+  # 文件路径 示例（ Windows配置D:/tmp/uploadPath，Linux配置 /home/tmp/uploadPath）
+  profile: D:/tmp/uploadPath
+  # 获取ip地址开关
+  addressEnabled: false
 
 # token配置
 token:
@@ -30,6 +50,10 @@ pagehelper:
 
 # 数据源配置
 spring:
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driverClassName: com.mysql.cj.jdbc.Driver

@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.web.controller;
 
 import com.wucf.core.common.Constants;
 import com.wucf.core.model.LoginBody;
@@ -47,7 +47,8 @@ public class SysLoginController {
     public ResponseEntity login(@RequestBody LoginBody loginBody) {
         ResponseEntity ajax = ResponseEntity.success();
         // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword());
+        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+                loginBody.getUuid());
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }
@@ -59,7 +60,7 @@ public class SysLoginController {
      */
     @GetMapping("getInfo")
     public ResponseEntity getInfo() {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         SysUser user = loginUser.getUser();
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
@@ -79,7 +80,7 @@ public class SysLoginController {
      */
     @GetMapping("getRouters")
     public ResponseEntity getRouters() {
-        LoginUser loginUser = tokenService.getUserFromRequest(ServletUtils.getRequest());
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         // 用户信息
         SysUser user = loginUser.getUser();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(user.getUserId());

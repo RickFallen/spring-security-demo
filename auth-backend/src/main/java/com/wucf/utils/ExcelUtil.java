@@ -1,42 +1,22 @@
 package com.wucf.utils;
 
+import com.wucf.config.SystemConfig;
+import com.wucf.core.annatation.Excel;
+import com.wucf.core.annatation.Excel.Type;
+import com.wucf.core.annatation.Excel.ColumnType;
 import com.wucf.core.annatation.Excels;
-import com.wucf.core.common.Constants;
 import com.wucf.core.exception.CustomException;
 import com.wucf.core.text.Convert;
 import com.wucf.system.domain.ResponseEntity;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import com.wucf.core.annatation.Excel;
-import com.wucf.core.annatation.Excel.Type;
-import com.wucf.core.annatation.Excel.ColumnType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -159,8 +139,7 @@ public class ExcelUtil<T> {
             throw new IOException("文件sheet不存在");
         }
 
-        // 获取最后一个非空行的行下标，比如总行数为n，则返回的为n-1
-        int rows = sheet.getLastRowNum();
+        int rows = sheet.getPhysicalNumberOfRows();
 
         if (rows > 0) {
             // 定义一个map用于存放excel列的序号和field.
@@ -192,11 +171,10 @@ public class ExcelUtil<T> {
                     }
                 }
             }
-            for (int i = 1; i <= rows; i++) {
+            for (int i = 1; i < rows; i++) {
                 // 从第2行开始取数据,默认第一行是表头.
                 Row row = sheet.getRow(i);
-                // 判断当前行是否是空行
-                if (isRowEmpty(row)) {
+                if (row == null) {
                     continue;
                 }
                 T entity = null;
@@ -274,22 +252,6 @@ public class ExcelUtil<T> {
     /**
      * 对list数据源将其里面的数据导入到excel表单
      *
-     * @param response  返回数据
-     * @param list      导出数据集合
-     * @param sheetName 工作表的名称
-     * @return 结果
-     * @throws IOException
-     */
-    public void exportExcel(HttpServletResponse response, List<T> list, String sheetName) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
-        this.init(list, sheetName, Type.EXPORT);
-        exportExcel(response.getOutputStream());
-    }
-
-    /**
-     * 对list数据源将其里面的数据导入到excel表单
-     *
      * @param sheetName 工作表的名称
      * @return 结果
      */
@@ -301,42 +263,29 @@ public class ExcelUtil<T> {
     /**
      * 对list数据源将其里面的数据导入到excel表单
      *
-     * @param sheetName 工作表的名称
-     * @return 结果
-     */
-    public void importTemplateExcel(HttpServletResponse response, String sheetName) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
-        this.init(null, sheetName, Type.IMPORT);
-        exportExcel(response.getOutputStream());
-    }
-
-    /**
-     * 对list数据源将其里面的数据导入到excel表单
-     *
-     * @return 结果
-     */
-    public void exportExcel(OutputStream out) {
-        try {
-            writeSheet();
-            wb.write(out);
-        } catch (Exception e) {
-            log.error("导出Excel异常{}", e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(wb);
-            IOUtils.closeQuietly(out);
-        }
-    }
-
-    /**
-     * 对list数据源将其里面的数据导入到excel表单
-     *
      * @return 结果
      */
     public ResponseEntity exportExcel() {
         OutputStream out = null;
         try {
-            writeSheet();
+            // 取出一共有多少个sheet.
+            double sheetNo = Math.ceil(list.size() / sheetSize);
+            for (int index = 0; index <= sheetNo; index++) {
+                createSheet(sheetNo, index);
+
+                // 产生一行
+                Row row = sheet.createRow(0);
+                int column = 0;
+                // 写入各个字段的列头名称
+                for (Object[] os : fields) {
+                    Excel excel = (Excel) os[1];
+                    this.createCell(excel, row, column++);
+                }
+                if (Type.EXPORT.equals(type)) {
+                    fillExcelData(index, row);
+                    addStatisticsRow();
+                }
+            }
             String filename = encodingFilename(sheetName);
             out = new FileOutputStream(getAbsoluteFile(filename));
             wb.write(out);
@@ -345,31 +294,19 @@ public class ExcelUtil<T> {
             log.error("导出Excel异常{}", e.getMessage());
             throw new CustomException("导出Excel失败，请联系网站管理员！");
         } finally {
-            IOUtils.closeQuietly(wb);
-            IOUtils.closeQuietly(out);
-        }
-    }
-
-    /**
-     * 创建写入数据到Sheet
-     */
-    public void writeSheet() {
-        // 取出一共有多少个sheet.
-        double sheetNo = Math.ceil(list.size() / sheetSize);
-        for (int index = 0; index <= sheetNo; index++) {
-            createSheet(sheetNo, index);
-
-            // 产生一行
-            Row row = sheet.createRow(0);
-            int column = 0;
-            // 写入各个字段的列头名称
-            for (Object[] os : fields) {
-                Excel excel = (Excel) os[1];
-                this.createCell(excel, row, column++);
+            if (wb != null) {
+                try {
+                    wb.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
-            if (Type.EXPORT.equals(type)) {
-                fillExcelData(index, row);
-                addStatisticsRow();
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }
@@ -493,7 +430,8 @@ public class ExcelUtil<T> {
                 cell.setCellValue(StringUtils.contains(Convert.toStr(value), ".") ? Convert.toDouble(value) : Convert.toInt(value));
             }
         } else if (ColumnType.IMAGE == attr.cellType()) {
-            ClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, (short) cell.getColumnIndex(), cell.getRow().getRowNum(), (short) (cell.getColumnIndex() + 1), cell.getRow().getRowNum() + 1);
+            ClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, (short) cell.getColumnIndex(), cell.getRow().getRowNum(), (short) (cell.getColumnIndex() + 1),
+                    cell.getRow().getRowNum() + 1);
             String imagePath = Convert.toStr(value);
             if (StringUtils.isNotEmpty(imagePath)) {
                 byte[] data = ImageUtils.getImage(imagePath);
@@ -775,7 +713,7 @@ public class ExcelUtil<T> {
      * @param filename 文件名称
      */
     public String getAbsoluteFile(String filename) {
-        String downloadPath = Constants.DOWNLOAD_PATH + filename;
+        String downloadPath = SystemConfig.getDownloadPath() + filename;
         File desc = new File(downloadPath);
         if (!desc.getParentFile().exists()) {
             desc.getParentFile().mkdirs();
@@ -937,24 +875,5 @@ public class ExcelUtil<T> {
             return val;
         }
         return val;
-    }
-
-    /**
-     * 判断是否是空行
-     *
-     * @param row 判断的行
-     * @return
-     */
-    private boolean isRowEmpty(Row row) {
-        if (row == null) {
-            return true;
-        }
-        for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
-            Cell cell = row.getCell(i);
-            if (cell != null && cell.getCellType() != CellType.BLANK) {
-                return false;
-            }
-        }
-        return true;
     }
 }
