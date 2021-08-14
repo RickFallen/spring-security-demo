@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.core.common.UserConstants;
 import com.wucf.core.controller.BaseController;
@@ -20,7 +20,7 @@ import java.io.IOException;
  * 个人信息 业务处理
  */
 @RestController
-@RequestMapping("/system/user/profile")
+@RequestMapping("/user/profile")
 public class SysProfileController extends BaseController {
     @Autowired
     private ISysUserService userService;

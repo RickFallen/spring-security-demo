@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 
 import com.wucf.core.common.UserConstants;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * 用户信息
  */
 @RestController
-@RequestMapping("/system/user")
+@RequestMapping("/user")
 public class SysUserController extends BaseController {
     @Autowired
     private ISysUserService userService;

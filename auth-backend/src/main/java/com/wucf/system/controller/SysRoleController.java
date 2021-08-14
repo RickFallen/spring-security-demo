@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.core.common.UserConstants;
 import com.wucf.core.controller.BaseController;
@@ -27,7 +27,7 @@ import java.util.Objects;
  * 角色信息
  */
 @RestController
-@RequestMapping("/system/role")
+@RequestMapping("/role")
 public class SysRoleController extends BaseController {
     @Autowired
     private ISysRoleService roleService;

@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.core.common.UserConstants;
 import com.wucf.core.controller.BaseController;
@@ -19,7 +19,7 @@ import java.util.List;
  * 岗位信息操作处理
  */
 @RestController
-@RequestMapping("/system/post")
+@RequestMapping("/post")
 public class SysPostController extends BaseController {
     @Autowired
     private ISysPostService postService;

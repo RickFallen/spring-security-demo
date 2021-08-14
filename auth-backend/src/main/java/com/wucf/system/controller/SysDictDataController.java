@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.core.controller.BaseController;
 import com.wucf.core.page.TableDataInfo;
@@ -21,7 +21,7 @@ import java.util.Objects;
  * 数据字典信息
  */
 @RestController
-@RequestMapping("/system/dict/data")
+@RequestMapping("/dict/data")
 public class SysDictDataController extends BaseController {
     @Autowired
     private ISysDictDataService dictDataService;

@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 
 import com.wucf.core.common.UserConstants;
@@ -21,7 +21,7 @@ import java.util.List;
  * 部门信息
  */
 @RestController
-@RequestMapping("/system/dept")
+@RequestMapping("/dept")
 public class SysDeptController extends BaseController {
     @Autowired
     private ISysDeptService deptService;

@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.core.common.UserConstants;
 import com.wucf.core.controller.BaseController;
@@ -19,7 +19,7 @@ import java.util.List;
  * 数据字典信息
  */
 @RestController
-@RequestMapping("/system/dict/type")
+@RequestMapping("/dict/type")
 public class SysDictTypeController extends BaseController {
     @Autowired
     private ISysDictTypeService dictTypeService;

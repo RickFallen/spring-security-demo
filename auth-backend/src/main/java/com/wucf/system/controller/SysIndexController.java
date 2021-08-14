@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.utils.Strings;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package com.wucf.web.controller.system;
+package com.wucf.system.controller;
 
 import com.wucf.core.common.UserConstants;
 import com.wucf.core.controller.BaseController;
@@ -21,7 +21,7 @@ import java.util.List;
  * 菜单信息
  */
 @RestController
-@RequestMapping("/system/menu")
+@RequestMapping("/menu")
 public class SysMenuController extends BaseController {
     @Autowired
     private ISysMenuService menuService;
